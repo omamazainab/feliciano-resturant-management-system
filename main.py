@@ -111,6 +111,19 @@ def categories():
     categories = Category.query.filter_by().all()
     return render_template("categories.html", categories=categories)
 
+@app.route("/add-category", methods=['GET', 'POST'])
+def addCategory():
+
+    if(request.method == 'POST'):
+
+        category_name = request.form.get("category_name")
+
+        entry = Category(category_name=category_name)
+
+        db.session.add(entry)
+        db.session.commit()
+
+    return render_template("add_category.html")
 
 @app.route("/categories/edit/<category_id>", methods=['GET', 'POST'])
 def categoriesEdit(category_id):
@@ -126,6 +139,7 @@ def categoriesEdit(category_id):
     category = Category.query.filter_by(id=category_id).first()
     return render_template("edit_category.html", category=category)
 
+
 @app.route("/categories/delete/<category_id>")
 def categoryDelete(category_id):
     category = Category.query.get_or_404(category_id)
@@ -133,13 +147,34 @@ def categoryDelete(category_id):
     db.session.commit()
     return redirect(url_for("categories"))
 
+
 @app.route("/products")
 def products():
     products = Product.query.filter_by().all()
     return render_template("products.html", products=products)
 
 
-@app.route("/products/edit/<product_id>",methods=['GET', 'POST'])
+@app.route("/add-product", methods=['GET', 'POST'])
+def addProduct():
+
+    if(request.method == 'POST'):
+
+        product_name = request.form.get("product_name")
+        product_category = request.form.get("product_category")
+        product_price = request.form.get("product_price")
+        product_description = request.form.get("product_description")
+        product_image = request.form.get("product_image")
+
+        entry = Product(product_name=product_name, product_category=product_category,
+                        product_price=product_price, product_description=product_description, product_image=product_image)
+
+        db.session.add(entry)
+        db.session.commit()
+
+    return render_template("add_product.html")
+
+
+@app.route("/products/edit/<product_id>", methods=['GET', 'POST'])
 def productdit(product_id):
     if(request.method == 'POST'):
 
@@ -161,6 +196,7 @@ def productdit(product_id):
 
     product = Product.query.filter_by(id=product_id).first()
     return render_template("edit_product.html", product=product)
+
 
 @app.route("/products/delete/<product_id>")
 def productDelete(product_id):
