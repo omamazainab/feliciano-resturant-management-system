@@ -3,7 +3,7 @@
         "local_server":"True",
         "local_uri":"mysql://root:@localhost/feliciano",
         "prod_uri":"mysql://root:@localhost/feliciano",
-        "gmail-user":"omamazainab00@gmail.com",
-        "gmail-password":"QAZplm1@!"
+        "gmail-user":"email@email.com",
+        "gmail-password":"password"
     }
 }
