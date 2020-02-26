@@ -1,5 +1,5 @@
 import os
-from flask import Flask,render_template,request
+from flask import Flask, render_template, request, flash
 import json
 import sqlite3
 from flask_mail import Mail
@@ -21,7 +21,7 @@ app.config.update(
     MAIL_USE_SSL=True,
     MAIL_USERNAME=params['gmail-user'],
     MAIL_PASSWORD=params['gmail-password']
-) 
+)
 
 mail = Mail(app)
 
@@ -33,7 +33,6 @@ else:
 db = SQLAlchemy(app)
 
 
-
 class Category(db.Model):
     __tablename__ = "category"
 
@@ -42,16 +41,17 @@ class Category(db.Model):
     products = db.relationship('Product', backref='category', lazy=True)
 
 
-
 class Product(db.Model):
     __tablename__ = "product"
 
     id = db.Column(db.Integer, primary_key=True)
     product_name = db.Column(db.String(80), nullable=False)
-    product_category = db.Column(db.Integer, db.ForeignKey('category.id'), nullable=False)
+    product_category = db.Column(
+        db.Integer, db.ForeignKey('category.id'), nullable=False)
     product_price = db.Column(db.Integer, nullable=False)
     product_description = db.Column(db.String(1000), nullable=False)
     product_image = db.Column(db.String(1000), nullable=False)
+
 
 class Contact(db.Model):
     __tablename__ = "contact"
@@ -64,38 +64,98 @@ class Contact(db.Model):
     date = db.Column(db.String(12), nullable=True)
 
 
-@app.route("/",methods=['GET', 'POST'])
-def home(): 
+@app.route("/", methods=['GET', 'POST'])
+def home():
     return render_template("index.html")
+
 
 @app.route("/about")
 def about():
     return render_template("about.html")
 
+
 @app.route("/menu")
 def menu():
     return render_template("menu.html")
 
-@app.route("/contact",methods=['GET', 'POST'])
+
+@app.route("/contact", methods=['GET', 'POST'])
 def contact():
     if(request.method == 'POST'):
         usrname = request.form.get("usrname")
         usremail = request.form.get("usremail")
         usrsubject = request.form.get("usrsubject")
         usrmsg = request.form.get("usrmsg")
-        entry = Contact(name=usrname , email = usremail , subject = usrsubject, message = usrmsg, date= datetime.now())
+        entry = Contact(name=usrname, email=usremail,
+                        subject=usrsubject, message=usrmsg, date=datetime.now())
         db.session.add(entry)
         db.session.commit()
         mail.send_message("new message from " + usrname +
-                          " ." + usrsubject,sender=usremail, body=usrmsg, recipients=[params['gmail-user']])
+                          " ." + usrsubject, sender=usremail, body=usrmsg, recipients=[params['gmail-user']])
     return render_template("contact.html")
-   
+
 
 @app.route("/stories")
 def stories():
     return render_template("blog.html")
 
 
+@app.route("/dashboard")
+def dashboard():
+    return render_template("dashboard.html")
+
+
+@app.route("/categories")
+def categories():
+
+    categories = Category.query.filter_by().all()
+    return render_template("categories.html", categories=categories)
+
+
+@app.route("/categories/edit/<category_id>", methods=['GET', 'POST'])
+def categoriesEdit(category_id):
+    if(request.method == 'POST'):
+        category_name = request.form.get("category_name")
+
+        selected_category = Category.query.get_or_404(category_id)
+
+        selected_category.category_name = category_name
+
+        db.session.commit()
+
+    category = Category.query.filter_by(id=category_id).first()
+    return render_template("edit_category.html", category=category)
+
+
+@app.route("/products")
+def products():
+    products = Product.query.filter_by().all()
+    return render_template("products.html", products=products)
+
+
+@app.route("/products/edit/<product_id>",methods=['GET', 'POST'])
+def productdit(product_id):
+    if(request.method == 'POST'):
+
+        product_name = request.form.get("product_name")
+        product_category = request.form.get("product_category")
+        product_price = request.form.get("product_price")
+        product_description = request.form.get("product_description")
+        product_image = request.form.get("product_image")
+
+        selected_product = Product.query.get_or_404(product_id)
+
+        selected_product.product_name = product_name
+        selected_product.product_category = product_category
+        selected_product.product_price = product_price
+        selected_product.product_description = product_description
+        selected_product.product_image = product_image
+
+        db.session.commit()
+
+    product = Product.query.filter_by(id=product_id).first()
+    return render_template("edit_product.html", product=product)
+
 
 if __name__ == "__main__":
-    app.run( debug = True )
+    app.run(debug=True)

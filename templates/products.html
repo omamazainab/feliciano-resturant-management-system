@@ -1,0 +1,3 @@
+{% for product in products %}
+<p>{{product.product_name}}<a href="/products/edit/{{product.id}}">Edit</a><a href="">Delete</a></p>
+{% endfor %}
