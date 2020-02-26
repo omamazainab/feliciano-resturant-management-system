@@ -1,5 +1,5 @@
 {% for category in categories %}
 
-<p>{{category.category_name}} <a href="/categories/edit/{{category.id}}">Edit</a><a href="">Delete</a></p>
+<p>{{category.category_name}} <a href="/categories/edit/{{category.id}}">Edit</a><a href="/categories/delete/{{category.id}}">Delete</a></p>
 
 {% endfor %}

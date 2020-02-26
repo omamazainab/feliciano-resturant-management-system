@@ -1,5 +1,5 @@
 import os
-from flask import Flask, render_template, request, flash
+from flask import Flask, render_template, request, flash, redirect, url_for
 import json
 import sqlite3
 from flask_mail import Mail
@@ -126,6 +126,12 @@ def categoriesEdit(category_id):
     category = Category.query.filter_by(id=category_id).first()
     return render_template("edit_category.html", category=category)
 
+@app.route("/categories/delete/<category_id>")
+def categoryDelete(category_id):
+    category = Category.query.get_or_404(category_id)
+    db.session.delete(category)
+    db.session.commit()
+    return redirect(url_for("categories"))
 
 @app.route("/products")
 def products():
@@ -155,6 +161,13 @@ def productdit(product_id):
 
     product = Product.query.filter_by(id=product_id).first()
     return render_template("edit_product.html", product=product)
+
+@app.route("/products/delete/<product_id>")
+def productDelete(product_id):
+    product = Product.query.get_or_404(product_id)
+    db.session.delete(product)
+    db.session.commit()
+    return redirect(url_for("products"))
 
 
 if __name__ == "__main__":
