@@ -143,6 +143,13 @@ def categoriesEdit(category_id):
 @app.route("/categories/delete/<category_id>")
 def categoryDelete(category_id):
     category = Category.query.get_or_404(category_id)
+
+    products_to_be_deleted = Product.query.filter_by(product_category=category_id).all()
+
+    for product in products_to_be_deleted :
+        db.session.delete(product)
+        db.session.commit()
+
     db.session.delete(category)
     db.session.commit()
     return redirect(url_for("categories"))
@@ -170,8 +177,8 @@ def addProduct():
 
         db.session.add(entry)
         db.session.commit()
-
-    return render_template("add_product.html")
+    categories = Category.query.filter_by().all()
+    return render_template("add_product.html",categories=categories)
 
 
 @app.route("/products/edit/<product_id>", methods=['GET', 'POST'])
@@ -195,7 +202,8 @@ def productdit(product_id):
         db.session.commit()
 
     product = Product.query.filter_by(id=product_id).first()
-    return render_template("edit_product.html", product=product)
+    categories = Category.query.filter_by().all()
+    return render_template("edit_product.html", product=product , categories=categories)
 
 
 @app.route("/products/delete/<product_id>")
