@@ -9,6 +9,8 @@
     </select>
     <input type="text" value="{{product.product_price}}" name="product_price">
     <input type="text" value="{{product.product_description}}" name="product_description">
-    <input type="text" value="{{product.product_image}}" name="product_image">
+    <!-- <input type="text" value="{{product.product_image}}" name="product_image"> -->
+    <a href="/delete-image/{{product.id}}">X</a>
+    <img width="100px" height="100px" src="{{url_for('static',filename=product.product_image)}}" width alt="">
     <input type="submit">
 </form>

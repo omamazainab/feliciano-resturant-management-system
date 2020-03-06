@@ -4,6 +4,7 @@
         "local_uri":"mysql://root:@localhost/feliciano",
         "prod_uri":"mysql://root:@localhost/feliciano",
         "gmail-user":"email@email.com",
-        "gmail-password":"password"
+        "gmail-password":"password",
+        "upload_folder":"C:\\Users\\danyyal shakaib\\feliciano\\static\\products"
     }
 }

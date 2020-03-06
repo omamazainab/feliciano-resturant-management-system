@@ -1,6 +1,7 @@
 import os
 from flask import Flask, render_template, request, flash, redirect, url_for
 import json
+from werkzeug import secure_filename 
 import sqlite3
 from flask_mail import Mail
 from flask_sqlalchemy import SQLAlchemy
@@ -15,6 +16,7 @@ with open('config.json', 'r') as c:
 local_server = True
 app = Flask(__name__)
 app.secret_key = "any_random_string"
+app.config['UPLOAD_FOLDER'] = params['upload_folder']
 app.config.update(
     MAIL_SERVER='smtp.gmail.com',
     MAIL_PORT='465',
@@ -74,9 +76,11 @@ def about():
     return render_template("about.html")
 
 
-@app.route("/menu")
+@app.route("/menu",methods=['GET'])
 def menu():
-    return render_template("menu.html")
+    categories = Category.query.filter_by().all()
+    products = Product.query.filter_by().all()
+    return render_template("mymenu.html", categories = categories , products = products)
 
 
 @app.route("/contact", methods=['GET', 'POST'])
@@ -111,19 +115,19 @@ def categories():
     categories = Category.query.filter_by().all()
     return render_template("categories.html", categories=categories)
 
-@app.route("/add-category", methods=['GET', 'POST'])
-def addCategory():
+# @app.route("/add-category", methods=['GET', 'POST'])
+# def addCategory():
 
-    if(request.method == 'POST'):
+#     if(request.method == 'POST'):
 
-        category_name = request.form.get("category_name")
+#         category_name = request.form.get("category_name")
 
-        entry = Category(category_name=category_name)
+#         entry = Category(category_name=category_name)
 
-        db.session.add(entry)
-        db.session.commit()
+#         db.session.add(entry)
+#         db.session.commit()
 
-    return render_template("add_category.html")
+#     return render_template("add_category.html")
 
 @app.route("/categories/edit/<category_id>", methods=['GET', 'POST'])
 def categoriesEdit(category_id):
@@ -140,19 +144,19 @@ def categoriesEdit(category_id):
     return render_template("edit_category.html", category=category)
 
 
-@app.route("/categories/delete/<category_id>")
-def categoryDelete(category_id):
-    category = Category.query.get_or_404(category_id)
+# @app.route("/categories/delete/<category_id>")
+# def categoryDelete(category_id):
+#     category = Category.query.get_or_404(category_id)
 
-    products_to_be_deleted = Product.query.filter_by(product_category=category_id).all()
+#     products_to_be_deleted = Product.query.filter_by(product_category=category_id).all()
 
-    for product in products_to_be_deleted :
-        db.session.delete(product)
-        db.session.commit()
+#     for product in products_to_be_deleted :
+#         db.session.delete(product)
+#         db.session.commit()
 
-    db.session.delete(category)
-    db.session.commit()
-    return redirect(url_for("categories"))
+#     db.session.delete(category)
+#     db.session.commit()
+#     return redirect(url_for("categories"))
 
 
 @app.route("/products")
@@ -170,7 +174,9 @@ def addProduct():
         product_category = request.form.get("product_category")
         product_price = request.form.get("product_price")
         product_description = request.form.get("product_description")
-        product_image = request.form.get("product_image")
+        f = request.files['product_image']
+        f.save(os.path.join(app.config['UPLOAD_FOLDER'] , secure_filename(f.filename)))
+        product_image = 'products/' + secure_filename(f.filename)
 
         entry = Product(product_name=product_name, product_category=product_category,
                         product_price=product_price, product_description=product_description, product_image=product_image)
@@ -209,9 +215,60 @@ def productdit(product_id):
 @app.route("/products/delete/<product_id>")
 def productDelete(product_id):
     product = Product.query.get_or_404(product_id)
+    if os.path.exists("C:\\Users\\danyyal shakaib\\feliciano\\static\\"+product.product_image) and product.product_image != "":
+        os.remove("C:\\Users\\danyyal shakaib\\feliciano\\static\\"+product.product_image)
     db.session.delete(product)
     db.session.commit()
+    
     return redirect(url_for("products"))
+
+
+
+@app.route("/delete-image/<product_id>")
+def deleteImage(product_id):
+    product = Product.query.get_or_404(product_id)
+    if os.path.exists("C:\\Users\\danyyal shakaib\\feliciano\\static\\"+product.product_image):
+        os.remove("C:\\Users\\danyyal shakaib\\feliciano\\static\\"+product.product_image)
+    product.product_image = ""
+    db.session.commit()
+    return redirect('/products/edit/'+product_id)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
 
 
 if __name__ == "__main__":

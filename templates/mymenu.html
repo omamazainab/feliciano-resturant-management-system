@@ -1,0 +1,154 @@
+{% extends "layout.html" %}
+{% block body %}
+
+
+<section class="ftco-section">z
+    <div class="container">
+        <div class="ftco-search">
+            <div class="row">
+
+                    <div class="col-md-12 nav-link-wrap">
+                        <div class="nav nav-pills d-flex text-center" id="v-pills-tab" role="tablist"
+                            aria-orientation="vertical">
+
+
+                    <a class="nav-link category-link ftco-animate show active" id="v-pills-1-tab" data-toggle="pill" href="#v-pills-1" role="tab" aria-controls="v-pills-1" aria-selected="true">Breakfast</a>
+
+                    <a class="nav-link category-link ftco-animate" id="v-pills-2-tab" data-toggle="pill" href="#v-pills-2" role="tab" aria-controls="v-pills-2" aria-selected="false">Lunch</a>
+
+                    <a class="nav-link category-link ftco-animate" id="v-pills-3-tab" data-toggle="pill" href="#v-pills-3" role="tab" aria-controls="v-pills-3" aria-selected="false">Dinner</a>
+
+                    <a class="nav-link category-link ftco-animate" id="v-pills-4-tab" data-toggle="pill" href="#v-pills-4" role="tab" aria-controls="v-pills-4" aria-selected="false">Drinks</a>
+
+                    <a class="nav-link category-link ftco-animate" id="v-pills-5-tab" data-toggle="pill" href="#v-pills-5" role="tab" aria-controls="v-pills-5" aria-selected="false">Desserts</a>
+
+                    <a class="nav-link category-link ftco-animate" id="v-pills-6-tab" data-toggle="pill" href="#v-pills-6" role="tab" aria-controls="v-pills-6" aria-selected="false">Wine</a>
+
+
+
+                        </div>
+                    </div>
+
+
+
+
+                    <div class="col-md-12 tab-wrap"></div>
+                    <div class="tab-content" id="v-pills-tabContent"></div>
+
+
+                    {% for category in categories %}
+
+
+                    <div class="tab-pane fade" id="v-pills-{{loop.index}}" role="tabpanel"
+                        aria-labelledby="v-pills-day-{{loop.index}}-tab">
+                        <div class="row no-gutters d-flex align-items-stretch">
+
+                            {% for product in products %}
+
+                            {% if product.product_category == category.id %}
+                            {% set product_image = product.product_image %}
+                            <div class="col-md-12 col-lg-6 d-flex align-self-stretch">
+                                <div class="menus d-sm-flex ftco-animate align-items-stretch">
+                                    <div class="menu-img img"
+                                   
+                                        style="background-image: url({{url_for('static',filename=product_image)}});">
+                                    </div>
+                                    <div class="text d-flex align-items-center">
+                                        <div>
+                                            <div class="d-flex">
+                                                <div class="one-half">
+                                                    <h3>{{product.product_name}}</h3>
+                                                </div>
+                                                <div class="one-forth">
+                                                    <span class="price">${{product.product_price}}</span>
+                                                </div>
+                                            </div>
+                                            <p>{{product.product_description}}</p>
+                                            <p><a href="#" class="btn btn-primary">Order now</a></p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {% endif %}
+
+                            {% endfor %}
+
+
+                        </div>
+                    </div>
+
+                    {% endfor %}
+
+                </div>
+            </div>
+
+            </div>
+        </div>
+    </div>
+</section>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script>
+
+$( document ).ready(function() {
+    $('#v-pills-1').addClass(' show active');
+    for(i=2;i<=6;i++)
+        $('#v-pills-'+i).addClass(' d-none');
+});
+
+
+
+$('#v-pills-2-tab').on('click',function(){
+    $('#v-pills-2').addClass(' show active');
+    $('#v-pills-2').removeClass('d-none')
+    for(i=1;i<=6;i++)
+        {if(i==2){i++}
+        $('#v-pills-'+i).addClass(' d-none')}
+})
+
+$('#v-pills-1-tab').on('click',function(){
+    $('#v-pills-1').addClass(' show active');
+    $('#v-pills-1').removeClass('d-none')
+    for(i=1;i<=6;i++)
+        {if(i==1){i++}
+        $('#v-pills-'+i).addClass(' d-none')}
+})
+
+$('#v-pills-3-tab').on('click',function(){
+    $('#v-pills-3').addClass(' show active');
+    $('#v-pills-3').removeClass('d-none')
+    for(i=1;i<=6;i++)
+        {if(i==3){i++}
+        $('#v-pills-'+i).addClass(' d-none')}
+})
+
+$('#v-pills-4-tab').on('click',function(){
+    $('#v-pills-4').addClass(' show active');
+    $('#v-pills-4').removeClass('d-none')
+    for(i=1;i<=6;i++)
+        {if(i==4){i++}
+        $('#v-pills-'+i).addClass(' d-none')}
+})
+
+$('#v-pills-5-tab').on('click',function(){
+    $('#v-pills-5').addClass(' show active');
+    $('#v-pills-5').removeClass('d-none')
+    for(i=1;i<=6;i++)
+        {if(i==5){i++}
+        $('#v-pills-'+i).addClass(' d-none')}
+})
+
+$('#v-pills-6-tab').on('click',function(){
+    $('#v-pills-6').addClass(' show active');
+    $('#v-pills-6').removeClass('d-none')
+    for(i=1;i<=6;i++)
+        {if(i==6){i++}
+        $('#v-pills-'+i).addClass(' d-none')}
+})
+
+
+
+
+</script>
+
+{% endblock %}
